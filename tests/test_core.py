@@ -10,7 +10,7 @@ from tap_openssf_scorecard.tap import TapopenSSFScorecard
 SAMPLE_CONFIG = {
     "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
     "auth_token": os.getenv("TEST_GITHUB_TOKEN"),
-    "project_urls": ["https://github.com/laurentS/slowapi"],
+    "project_urls": ["https://github.com/meltano/sdk"],
 }
 
 
