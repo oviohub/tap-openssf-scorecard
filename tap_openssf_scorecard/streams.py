@@ -7,7 +7,7 @@ from singer_sdk import typing as th
 from tap_openssf_scorecard.client import openSSFScorecardStream
 
 check_object = th.ObjectType(
-    th.Property("score", th.IntegerType),
+    th.Property("score", th.NumberType),
     th.Property("reason", th.StringType),
     th.Property("details", th.ArrayType(th.StringType)),
 )
@@ -57,7 +57,7 @@ class ScorecardStream(openSSFScorecardStream):
                 th.Property("vulnerabilities", check_object),
             ),
         ),
-        th.Property("score", th.IntegerType),
+        th.Property("score", th.NumberType),
     ).to_dict()
 
     def normalize(self, s: str) -> str:
