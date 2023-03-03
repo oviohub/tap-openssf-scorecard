@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import subprocess
-from subprocess import PIPE, Popen
 from typing import Iterable
 
 from singer_sdk.streams import Stream
@@ -23,8 +22,8 @@ class openSSFScorecardStream(Stream):
         Args:
             context: Stream partition or context dictionary.
 
-        Raises:
-            NotImplementedError: If the implementation is TODO
+        Yields:
+            dict of records
         """
 
         for repo_url in self.config["project_urls"]:
