@@ -9,7 +9,7 @@ from tap_openssf_scorecard.client import openSSFScorecardStream
 check_object = th.ObjectType(
     th.Property("score", th.IntegerType),
     th.Property("reason", th.StringType),
-    th.Property("details", th.StringType),
+    th.Property("details", th.ArrayType(th.StringType)),
 )
 
 
