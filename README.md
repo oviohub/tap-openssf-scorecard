@@ -59,7 +59,7 @@ environment variable is set either in the terminal context or in the `.env` file
 
 ### Source Authentication and Authorization
 
-To run tests, please set `GITHUB_TOKEN` to a valid token (classic) as detailed in the
+To run tests, please set `TEST_GITHUB_TOKEN` to a valid token (classic) as detailed in the
 [openssf docs](https://github.com/ossf/scorecard/blob/main/README.md#authentication).
 
 ## Usage
