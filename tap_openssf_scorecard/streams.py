@@ -7,7 +7,9 @@ from singer_sdk import typing as th
 from tap_openssf_scorecard.client import openSSFScorecardStream
 
 check_object = th.ObjectType(
-    th.Property("score", th.NumberType),
+    # openssf scorecard returns scores between 0 and 10 with
+    # 1 decimal position. We 10x them and manipulate them as int
+    th.Property("score", th.IntegerType),
     th.Property("reason", th.StringType),
     th.Property("details", th.ArrayType(th.StringType)),
 )
@@ -57,7 +59,7 @@ class ScorecardStream(openSSFScorecardStream):
                 th.Property("vulnerabilities", check_object),
             ),
         ),
-        th.Property("score", th.NumberType),
+        th.Property("score", th.IntegerType),
     ).to_dict()
 
     def normalize(self, s: str) -> str:
@@ -70,6 +72,8 @@ class ScorecardStream(openSSFScorecardStream):
         new_checks = dict()
         for check in row["checks"]:
             d = {k: check[k] for k in check if k not in ["documentation", "name"]}
+            # return score as integers between 0-100 instead of decimals 0-10
+            d["score"] = int(d["score"] * 10)
             new_checks[f"{self.normalize(check['name'])}"] = d
         row["checks"] = new_checks
         return row
