@@ -40,6 +40,13 @@ class TapopenSSFScorecard(Tap):
             default="https://api.mysample.com",
             description="The url for the API service",
         ),
+        th.Property(
+            "use_local_scorecard_cli",
+            th.BooleanType,
+            required=False,
+            default=False,
+            description="Use a locally installed version of the scorecard cli.",
+        ),
     ).to_dict()
 
     def discover_streams(self) -> list[streams.openSSFScorecardStream]:

@@ -27,17 +27,30 @@ class openSSFScorecardStream(Stream):
         """
 
         for repo_url in self.config["project_urls"]:
-            cmd = [
-                "docker",
-                "run",
-                "-e",
-                f"GITHUB_AUTH_TOKEN={self.config['auth_token']}",
-                "gcr.io/openssf/scorecard:stable",
-                "--show-details",
-                "--format=json",
-                f"--repo={repo_url}",
-            ]
-            result = subprocess.run(cmd, capture_output=True)
+
+            if self.config["use_local_scorecard_cli"]:
+                cmd = [
+                    "scorecard",
+                    "--show-details",
+                    "--format=json",
+                    f"--repo={repo_url}",
+                ]
+                temp_env = {"GITHUB_AUTH_TOKEN": self.config['auth_token']}
+            else:
+                cmd = [
+                    "docker",
+                    "run",
+                    "-e",
+                    f"GITHUB_AUTH_TOKEN={self.config['auth_token']}",
+                    "gcr.io/openssf/scorecard:stable",
+                    "--show-details",
+                    "--format=json",
+                    f"--repo={repo_url}",
+                ]
+
+                temp_env = {}
+
+            result = subprocess.run(cmd, capture_output=True, env=temp_env)
             if len(result.stdout) == 0:
                 self.logger.error(result.stderr)
                 continue
