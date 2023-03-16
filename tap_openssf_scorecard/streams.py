@@ -59,7 +59,7 @@ class ScorecardStream(openSSFScorecardStream):
                 th.Property("vulnerabilities", check_object),
             ),
         ),
-        th.Property("score", th.IntegerType),
+        th.Property("score", th.NumberType),
     ).to_dict()
 
     def normalize(self, s: str) -> str:
