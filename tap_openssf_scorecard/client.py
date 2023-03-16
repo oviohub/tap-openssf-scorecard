@@ -29,7 +29,7 @@ class openSSFScorecardStream(Stream):
         for repo_url in self.config["project_urls"]:
             if self.config["use_local_scorecard_cli"]:
                 cmd = [
-                    "scorecard",
+                    self.config["local_scorecard_cli_path"],
                     "--show-details",
                     "--format=json",
                     f"--repo={repo_url}",

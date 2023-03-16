@@ -47,6 +47,13 @@ class TapopenSSFScorecard(Tap):
             default=False,
             description="Use a locally installed version of the scorecard cli.",
         ),
+        th.Property(
+            "local_scorecard_cli_path",
+            th.StringType,
+            required=False,
+            default="./scorecard",
+            description="Change path to your locally installed version of the scorecard CLI.",
+        ),
     ).to_dict()
 
     def discover_streams(self) -> list[streams.openSSFScorecardStream]:
