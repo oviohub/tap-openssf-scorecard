@@ -59,7 +59,7 @@ class ScorecardStream(openSSFScorecardStream):
                 th.Property("vulnerabilities", check_object),
             ),
         ),
-        th.Property("score", th.NumberType),
+        th.Property("score", th.IntegerType),
     ).to_dict()
 
     def normalize(self, s: str) -> str:
@@ -69,10 +69,11 @@ class ScorecardStream(openSSFScorecardStream):
         repo = row.pop("repo")
         row["repo_name"] = repo["name"]
         row["repo_commit"] = repo["commit"]
+        # return scores as integers between 0-100 instead of decimals 0-10
+        row["score"] = int(row["score"] * 10)
         new_checks = dict()
         for check in row["checks"]:
             d = {k: check[k] for k in check if k not in ["documentation", "name"]}
-            # return score as integers between 0-100 instead of decimals 0-10
             d["score"] = int(d["score"] * 10)
             new_checks[f"{self.normalize(check['name'])}"] = d
         row["checks"] = new_checks
