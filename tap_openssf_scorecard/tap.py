@@ -52,7 +52,7 @@ class TapopenSSFScorecard(Tap):
             th.StringType,
             required=False,
             default="./scorecard",
-            description="Change path to your locally installed version of the scorecard CLI.",
+            description="Path to your locally installed version of the scorecard CLI.",
         ),
     ).to_dict()
 
