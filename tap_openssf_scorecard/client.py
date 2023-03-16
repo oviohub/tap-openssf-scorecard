@@ -27,7 +27,6 @@ class openSSFScorecardStream(Stream):
         """
 
         for repo_url in self.config["project_urls"]:
-
             if self.config["use_local_scorecard_cli"]:
                 cmd = [
                     "scorecard",
@@ -35,7 +34,7 @@ class openSSFScorecardStream(Stream):
                     "--format=json",
                     f"--repo={repo_url}",
                 ]
-                temp_env = {"GITHUB_AUTH_TOKEN": self.config['auth_token']}
+                temp_env = {"GITHUB_AUTH_TOKEN": self.config["auth_token"]}
             else:
                 cmd = [
                     "docker",
