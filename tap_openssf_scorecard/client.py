@@ -27,7 +27,8 @@ class openSSFScorecardStream(Stream):
         """
 
         for repo_url in self.config["project_urls"]:
-            if self.config["use_local_scorecard_cli"]:
+            temp_env = {}
+            if self.config["local_scorecard_cli_path"]:
                 cmd = [
                     self.config["local_scorecard_cli_path"],
                     "--show-details",
@@ -46,8 +47,6 @@ class openSSFScorecardStream(Stream):
                     "--format=json",
                     f"--repo={repo_url}",
                 ]
-
-                temp_env = {}
 
             result = subprocess.run(cmd, capture_output=True, env=temp_env)
             if len(result.stdout) == 0:

@@ -39,8 +39,7 @@ pipx install git+https://github.com/oviohub/tap-openssf-scorecard.git@main
 | project_urls        | True     | None    | Project urls (eg. https://github.com/meltano/sdk |
 | start_date          | False    | None    | The earliest record date to sync |
 | api_url             | False    | https://api.mysample.com | The url for the API service |
-| use_local_scorecard_cli| False | False | Use a locally installed version of the scorecard CLI. |
-| local_scorecard_cli_path| False| "./scorecard" | Path to your locally installed version of the scorecard CLI. |
+| local_scorecard_cli_path| False| None    | Path to your locally installed version of the scorecard CLI. The tap uses a docker version by default. |
 | stream_maps         | False    | None    | Config object for stream maps capability. For more information check out [Stream Maps](https://sdk.meltano.com/en/latest/stream_maps.html). |
 | stream_map_config   | False    | None    | User-defined config values to be used within map expressions. |
 | flattening_enabled  | False    | None    | 'True' to enable schema flattening and automatically expand nested properties. |

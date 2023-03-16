@@ -41,18 +41,14 @@ class TapopenSSFScorecard(Tap):
             description="The url for the API service",
         ),
         th.Property(
-            "use_local_scorecard_cli",
-            th.BooleanType,
-            required=False,
-            default=False,
-            description="Use a locally installed version of the scorecard CLI.",
-        ),
-        th.Property(
             "local_scorecard_cli_path",
             th.StringType,
             required=False,
-            default="./scorecard",
-            description="Path to your locally installed version of the scorecard CLI.",
+            default="",
+            description=(
+                "Path to your locally installed version of the scorecard CLI. "
+                "The tap uses a docker version by default."
+            ),
         ),
     ).to_dict()
 
