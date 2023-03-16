@@ -45,7 +45,7 @@ class TapopenSSFScorecard(Tap):
             th.BooleanType,
             required=False,
             default=False,
-            description="Use a locally installed version of the scorecard cli.",
+            description="Use a locally installed version of the scorecard CLI.",
         ),
         th.Property(
             "local_scorecard_cli_path",
