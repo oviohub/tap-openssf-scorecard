@@ -27,7 +27,7 @@ class TapopenSSFScorecard(Tap):
             "project_urls",
             th.ArrayType(th.StringType),
             required=True,
-            description="Project urls (eg. https://github.com/meltano/sdk",
+            description="Project urls (eg. https://github.com/meltano/sdk)",
         ),
         th.Property(
             "start_date",

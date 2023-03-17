@@ -36,7 +36,7 @@ pipx install git+https://github.com/oviohub/tap-openssf-scorecard.git@main
 | Setting             | Required | Default | Description |
 |:--------------------|:--------:|:-------:|:------------|
 | auth_token          | True     | None    | The token to authenticate against the API service |
-| project_urls        | True     | None    | Project urls (eg. https://github.com/meltano/sdk |
+| project_urls        | True     | None    | Project urls (eg. https://github.com/meltano/sdk) |
 | start_date          | False    | None    | The earliest record date to sync |
 | api_url             | False    | https://api.mysample.com | The url for the API service |
 | local_scorecard_cli_path| False| None    | Path to your locally installed version of the scorecard CLI. The tap uses a docker version by default. |
