@@ -48,7 +48,7 @@ class openSSFScorecardStream(Stream):
                     f"--repo={repo_url}",
                 ]
 
-            result = subprocess.run(cmd, capture_output=True, env=temp_env)
+            result = subprocess.run(cmd, capture_output=True, env=temp_env, check=True)
             if len(result.stdout) == 0:
                 self.logger.error(result.stderr)
                 continue

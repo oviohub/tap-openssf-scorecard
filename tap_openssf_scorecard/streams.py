@@ -72,6 +72,7 @@ class ScorecardStream(openSSFScorecardStream):
         # return scores as integers between 0-100 instead of decimals 0-10
         row["score"] = int(row["score"] * 10)
         new_checks = dict()
+        assert row is not None, f"Scorecard result error: {row}"
         for check in row["checks"]:
             d = {k: check[k] for k in check if k not in ["documentation", "name"]}
             d["score"] = int(d["score"] * 10)
