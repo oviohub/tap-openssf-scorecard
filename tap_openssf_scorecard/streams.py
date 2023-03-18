@@ -28,7 +28,7 @@ class ScorecardStream(openSSFScorecardStream):
     schema = th.PropertiesList(
         th.Property("repo_name", th.StringType),
         th.Property("repo_commit", th.StringType),
-        th.Property("date", th.DateType),
+        th.Property("date", th.DateTimeType),
         th.Property(
             "scorecard",
             th.ObjectType(
