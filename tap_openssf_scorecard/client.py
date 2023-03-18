@@ -48,9 +48,11 @@ class openSSFScorecardStream(Stream):
                     f"--repo={repo_url}",
                 ]
 
-            result = subprocess.run(cmd, capture_output=True, env=temp_env, check=True)
+            result = subprocess.run(cmd, capture_output=True, env=temp_env)
             if len(result.stdout) == 0:
-                self.logger.error(result.stderr)
+                self.logger.error(
+                    f"Scorecard returned nothing for {repo_url}: {result.stderr}"
+                )
                 continue
             record = json.loads(result.stdout)
             transformed_record = self.post_process(record, context)
