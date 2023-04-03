@@ -27,6 +27,9 @@ class openSSFScorecardStream(Stream):
         """
 
         for repo_url in self.config["project_urls"]:
+            self.logger.info(f"Running scorecard on {repo_url}.")
+            if repo_url == "":
+                continue
             temp_env = {}
             if self.config["local_scorecard_cli_path"]:
                 cmd = [
