@@ -74,7 +74,11 @@ class ScorecardStream(openSSFScorecardStream):
         new_checks = dict()
 
         assert row is not None, f"Scorecard result error: {row}"
-        assert row["checks"] is not None, f"Scorecard checks empty: {row}"
+        if row["checks"] == None:
+            self.logger.error(
+                    f"Scorecard checks empty for {repo}"
+                )
+            return None
 
         for check in row["checks"]:
             d = {k: check[k] for k in check if k not in ["documentation", "name"]}
