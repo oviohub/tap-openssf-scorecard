@@ -74,7 +74,7 @@ class ScorecardStream(openSSFScorecardStream):
         new_checks = dict()
 
         assert row is not None, f"Scorecard result error: {row}"
-        if row["checks"] == None:
+        if row["checks"] is None:
             self.logger.error(f"Scorecard checks empty for {repo}")
             return None
 
