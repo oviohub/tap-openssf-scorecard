@@ -27,6 +27,9 @@ class openSSFScorecardStream(Stream):
         """
 
         for repo_url in self.config["project_urls"]:
+            self.logger.info(f"Running scorecard on {repo_url}.")
+            if repo_url == "":
+                continue
             temp_env = {}
             if self.config["local_scorecard_cli_path"]:
                 cmd = [
@@ -50,7 +53,9 @@ class openSSFScorecardStream(Stream):
 
             result = subprocess.run(cmd, capture_output=True, env=temp_env)
             if len(result.stdout) == 0:
-                self.logger.error(result.stderr)
+                self.logger.error(
+                    f"Scorecard returned nothing for {repo_url}: {str(result.stderr)}"
+                )
                 continue
             record = json.loads(result.stdout)
             transformed_record = self.post_process(record, context)
