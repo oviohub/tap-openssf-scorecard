@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-import json
-import subprocess
 from typing import Iterable
 
-from singer_sdk.streams import Stream
+from singer_sdk.streams import RESTStream
 
 
-class openSSFScorecardStream(Stream):
+class openSSFScorecardStream(RESTStream):
     """Stream class for openSSF-scorecard streams."""
 
     def get_records(self, context: dict | None) -> Iterable[dict]:
@@ -30,36 +28,31 @@ class openSSFScorecardStream(Stream):
             self.logger.info(f"Running scorecard on {repo_url}.")
             if repo_url == "":
                 continue
-            temp_env = {}
-            if self.config["local_scorecard_cli_path"]:
-                cmd = [
-                    self.config["local_scorecard_cli_path"],
-                    "--show-details",
-                    "--format=json",
-                    f"--repo={repo_url}",
-                ]
-                temp_env = {"GITHUB_AUTH_TOKEN": self.config["auth_token"]}
-            else:
-                cmd = [
-                    "docker",
-                    "run",
-                    "-e",
-                    f"GITHUB_AUTH_TOKEN={self.config['auth_token']}",
-                    "gcr.io/openssf/scorecard:stable",
-                    "--show-details",
-                    "--format=json",
-                    f"--repo={repo_url}",
-                ]
 
-            result = subprocess.run(cmd, capture_output=True, env=temp_env)
-            if len(result.stdout) == 0:
-                self.logger.error(
-                    f"Scorecard returned nothing for {repo_url}: {str(result.stderr)}"
-                )
-                continue
-            record = json.loads(result.stdout)
-            transformed_record = self.post_process(record, context)
-            if transformed_record is None:
-                continue
-            # the cli returns a single json line, so no need to iterate here
-            yield transformed_record
+            context = {"repo_url": "%2F".join(repo_url.rsplit("/", 2)[1:])}
+            yield from super().get_records(context)
+
+    def get_scorecard_command(self, repo_url: str) -> list[str]:
+        """
+        Decide which version of scorecard to use (local, docker)
+        and return a command ready to pass to subprocess.run()
+        """
+        if self.config["local_scorecard_cli_path"]:
+            cmd = [
+                self.config["local_scorecard_cli_path"],
+                "--show-details",
+                "--format=json",
+                f"--repo={repo_url}",
+            ]
+        else:
+            cmd = [
+                "docker",
+                "run",
+                "-e",
+                f"GITHUB_AUTH_TOKEN={self.config['auth_token']}",
+                "gcr.io/openssf/scorecard:stable",
+                "--show-details",
+                "--format=json",
+                f"--repo={repo_url}",
+            ]
+        return cmd
