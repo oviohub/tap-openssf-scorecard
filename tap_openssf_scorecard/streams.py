@@ -80,8 +80,6 @@ class ScorecardStream(openSSFScorecardStream):
     def get_url(self, context: dict | None) -> str:
         if context is not None:
             url = f"{self.url_base}{context['repo_url']}"
-            self.logger.warning(context)
-            self.logger.warning(url)
             return url
 
         return ""
@@ -115,7 +113,7 @@ class ScorecardStream(openSSFScorecardStream):
 
         result = subprocess.run(cmd, capture_output=True, env=temp_env)
         if len(result.stdout) == 0:
-            self.logger.error(
+            self.logger.warning(
                 f"Scorecard returned nothing for {repo_url}: {str(result.stderr)}"
             )
             # No data found at all for this repo, just return a dummy
@@ -130,7 +128,6 @@ class ScorecardStream(openSSFScorecardStream):
                 }
             ]
         record = json.loads(result.stdout)
-        self.logger.info(f"Local record {record}")
         if record["score"] < 0:
             # scorecard returns -1 when it fails
             return [record]
@@ -156,7 +153,7 @@ class ScorecardStream(openSSFScorecardStream):
 
         assert row is not None, f"Scorecard result error: {row}"
         if not (("checks" in row) or ("check" in row)):
-            self.logger.error(f"Scorecard checks empty for {repo}")
+            self.logger.warning(f"Scorecard checks empty for {repo}")
             return None
 
         if "check" in row:
