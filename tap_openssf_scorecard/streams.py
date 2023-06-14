@@ -32,7 +32,7 @@ class ScorecardStream(openSSFScorecardStream):
     """
 
     name = "scorecard"
-    path = None
+    path = ""
     primary_keys = ["repo_name", "repo_commit"]
     replication_key = None
     schema = th.PropertiesList(
@@ -72,12 +72,13 @@ class ScorecardStream(openSSFScorecardStream):
         th.Property("score", th.IntegerType),
     ).to_dict()
 
+    @property
     def url_base(self) -> str:
         return "https://deps.dev/_/project/github/"
 
     def get_url(self, context: dict | None) -> str:
         if context is not None:
-            url = f"{self.url_base()}{context['repo_url']}"
+            url = f"{self.url_base}{context['repo_url']}"
             self.logger.warning(context)
             self.logger.warning(url)
             return url
