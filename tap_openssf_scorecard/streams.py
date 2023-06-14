@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from datetime import date
 from typing import Iterable
 
 from requests import Response
@@ -100,33 +101,40 @@ class ScorecardStream(openSSFScorecardStream):
         """
         if response.status_code in [200]:
             obj = response.json()
-            return [obj["project"]["scorecardV2"]]
-        else:
-            # data not available from the API, let's build the scorecard
-            self.logger.info(f"No data for {response.url}: running scorecard locally.")
-            repo_name = response.url.rsplit("/", 1)[-1].replace("%2F", "/")
-            repo_url = f"https://github.com/{repo_name}"
+            if "scorecardV2" in obj["project"]:
+                return [obj["project"]["scorecardV2"]]
 
-            cmd = self.get_scorecard_command(repo_url)
-            # temp_env is only really used by the local cli, not docker
-            temp_env = {"GITHUB_AUTH_TOKEN": self.config["auth_token"]}
+        # data not available from the API, let's build the scorecard
+        self.logger.info(f"No data for {response.url}: running scorecard locally.")
+        repo_name = response.url.rsplit("/", 1)[-1].replace("%2F", "/")
+        repo_url = f"https://github.com/{repo_name}"
 
-            result = subprocess.run(cmd, capture_output=True, env=temp_env)
-            if len(result.stdout) == 0:
-                self.logger.error(
-                    f"Scorecard returned nothing for {repo_url}: {str(result.stderr)}"
-                )
-                # No data found at all for this repo, just give up
-                return []
-            record = json.loads(result.stdout)
-            self.logger.info(f"Local record {record}")
-            if record["score"] < 0:
-                # scorecard returns -1 when it fails
-                return []
-            transformed_record = self.post_process(record, None)
-            if transformed_record is not None:
-                return transformed_record
-            return []
+        cmd = self.get_scorecard_command(repo_url)
+        # temp_env is only really used by the local cli, not docker
+        temp_env = {"GITHUB_AUTH_TOKEN": self.config["auth_token"]}
+
+        result = subprocess.run(cmd, capture_output=True, env=temp_env)
+        if len(result.stdout) == 0:
+            self.logger.error(
+                f"Scorecard returned nothing for {repo_url}: {str(result.stderr)}"
+            )
+            # No data found at all for this repo, just return a dummy
+            # record with minimal data
+            return [
+                {
+                    "repo_name": repo_name,
+                    "repo_commit": "",
+                    "date": str(date.today()),
+                    "score": -1,
+                    "checks": {},
+                }
+            ]
+        record = json.loads(result.stdout)
+        self.logger.info(f"Local record {record}")
+        if record["score"] < 0:
+            # scorecard returns -1 when it fails
+            return [record]
+        return [record]
 
     def validate_response(self, response: Response) -> None:
         # we expect errors for repos that are not on deps.dev.
@@ -134,11 +142,16 @@ class ScorecardStream(openSSFScorecardStream):
         return None
 
     def post_process(self, row: dict, context: dict | None = None) -> dict | None:
-        repo = row.pop("repo")
-        row["repo_name"] = repo["name"]
-        row["repo_commit"] = repo["commit"]
+        # construct an empty record with repo name, no commit and score=-1
+        # if we don't find the expected data
+        repo = row.pop("repo", {})
+        row["repo_name"] = repo.get(
+            "name", context["repo_url"] if context is not None else ""
+        )
+        row["repo_commit"] = repo.get("commit", "")
         # return scores as integers between 0-100 instead of decimals 0-10
-        row["score"] = int(row["score"] * 10)
+        # return -1 if no data was found
+        row["score"] = int(row.get("score", -0.1) * 10)
         new_checks = dict()
 
         assert row is not None, f"Scorecard result error: {row}"
