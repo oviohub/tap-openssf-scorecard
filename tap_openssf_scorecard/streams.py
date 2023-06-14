@@ -90,6 +90,12 @@ class ScorecardStream(openSSFScorecardStream):
     def parse_response(self, response: Response) -> Iterable[dict]:
         """
         Read API response and fallback to running scorecard subprocess in case of error.
+
+        Args:
+            response: the requests.Response object
+
+        Returns:
+            Iterable of records (dicts)
         """
         if response.status_code in [200]:
             obj = response.json()

@@ -36,6 +36,12 @@ class openSSFScorecardStream(RESTStream):
         """
         Decide which version of scorecard to use (local, docker)
         and return a command ready to pass to subprocess.run()
+
+        Args:
+            repo_url: (string) the full url to the repo
+
+        Returns:
+            list of command line parts (strings)
         """
         if self.config["local_scorecard_cli_path"]:
             cmd = [
